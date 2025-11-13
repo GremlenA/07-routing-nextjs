@@ -1,23 +1,21 @@
+"use client";
 
-import React from 'react';
-import css from './SearchBox.module.css';
+import css from "./SearchBox.module.css";
 
 interface SearchBoxProps {
-  value: string;
+  value: string | undefined;
   onChange: (v: string) => void;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({ value, onChange }) => {
+export default function SearchBox({ value, onChange }: SearchBoxProps) {
   return (
     <input
       className={css.input}
       type="text"
       placeholder="Search notes"
-      value={value}
+      value={value ?? ""}  // ✅ предотвращаем uncontrolled issue
       onChange={(e) => onChange(e.target.value)}
       aria-label="Search notes"
     />
   );
-};
-
-export default SearchBox;
+}

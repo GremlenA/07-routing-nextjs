@@ -7,8 +7,8 @@ import SearchBox from "../../components/SearchBox/SearchBox";
 import Modal from "../../components/Modal/Modal";
 import NoteForm from "../../components/NoteForm/NoteForm";
 import { useDebounce } from "use-debounce";
-import { fetchNotes } from "../lib/api";
-import type { FetchNotesResponse } from "../lib/api";
+import { fetchNotes } from "../../lib/api";
+import type { FetchNotesResponse } from "../../lib/api";
 import dynamic from "next/dynamic";
 import css from "./NotesPage.module.css";
 
