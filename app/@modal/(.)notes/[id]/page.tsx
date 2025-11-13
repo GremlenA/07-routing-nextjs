@@ -1,10 +1,11 @@
 "use client";
 
-import ModalNoteClient from "./ModalNoteClient";
 import { useParams } from "next/navigation";
+import ModalNoteClient from "./ModalNoteClient";
 
 export default function ModalNotePage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id as string;
 
-  return <ModalNoteClient noteId={id as string} />;
+  return <ModalNoteClient id={id} />;
 }
