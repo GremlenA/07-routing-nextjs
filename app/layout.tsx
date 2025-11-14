@@ -22,16 +22,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <TanStackProvider>
           <Header />
-          {children}
 
+          <main>
+            {children}
+            {modal}
+          </main>
+
+          {/* Корень для портала модалки */}
           <div id="modal-root"></div>
 
           <Footer />

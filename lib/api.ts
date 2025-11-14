@@ -1,3 +1,4 @@
+// lib/api.ts
 import axios from "axios";
 import type { Note, NewNote } from "../types/note";
 
@@ -14,23 +15,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
 export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
-  tag?: string; 
+  tag?: string;
 }
-
 
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
-
-
-export type CreateNoteParams = NewNote;
-
 
 export const fetchNotes = async (
   params: FetchNotesParams = {}
@@ -42,28 +37,23 @@ export const fetchNotes = async (
   q.set("perPage", String(perPage));
 
   if (search?.trim()) q.set("search", search.trim());
-
- 
   if (tag && tag !== "all") q.set("tag", tag);
 
   const res = await api.get<FetchNotesResponse>(`/notes?${q.toString()}`);
   return res.data;
 };
 
-
-export const fetchNoteById = async (id: string): Promise<Note> => {
+export const fetchNoteById = async (id: string) => {
   const res = await api.get<Note>(`/notes/${id}`);
   return res.data;
 };
 
-
-export const createNote = async (data: CreateNoteParams): Promise<Note> => {
+export const createNote = async (data: NewNote) => {
   const res = await api.post<Note>("/notes", data);
   return res.data;
 };
 
-
-export const deleteNote = async (id: string): Promise<Note> => {
+export const deleteNote = async (id: string) => {
   const res = await api.delete<Note>(`/notes/${id}`);
   return res.data;
 };

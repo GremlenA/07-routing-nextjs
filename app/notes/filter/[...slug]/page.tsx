@@ -1,83 +1,30 @@
-"use client";
-
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { getQueryClient } from "../../../../getQueryClient";
 import { fetchNotes } from "@/lib/api";
-import NoteList from "@/components/NoteList/NoteList";
-import SearchBox from "@/components/SearchBox/SearchBox";
-import Pagination from "@/components/Pagination/Pagination";
+import NotesByTagClient from "./NotesByTagClient";
 
-// ✅ Modal and Form
-import Modal from "@/components/Modal/Modal";
-import NoteForm from "@/components/NoteForm/NoteForm";
+export default async function NotesByTagPage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
 
-import css from "../../NotesPage.module.css";
+  // ⬇️ ОБЯЗАТЕЛЬНО — ждём Promise
+  const { slug } = await params;
 
-export default function NotesByTagPage({ params }: { params: { tag: string } }) {
-  const tag = params.tag;
-  const [query, setQuery] = useState(tag === "all" ? "" : tag);
-  const [page, setPage] = useState(1);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const tag = slug?.[0] ?? "all";
+  const query = tag === "all" ? undefined : tag;
 
-  // ✅ Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = getQueryClient();
 
-  const handleModalClose = () => setIsModalOpen(false);
-  const handleModalSuccess = () => setIsModalOpen(false);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["notes", page, query],
-    queryFn: () => fetchNotes(query === "" ? {} : { search: query, page }),
+  await queryClient.prefetchQuery({
+    queryKey: ["notes", 1, query],
+    queryFn: () => fetchNotes({ page: 1, tag: query }),
   });
 
   return (
-    <main className={css.page}>
-      {/* Search + Create button */}
-      <div className={css.toolbar}>
-        <SearchBox
-          value={query}
-          onChange={(v) => {
-            setQuery(v);
-            setPage(1);
-          }}
-        />
-
-        {/* ✅ open modal */}
-        <button className={css.addButton} onClick={() => setIsModalOpen(true)}>
-          Create note +
-        </button>
-      </div>
-
-      {/* Loading */}
-      {isLoading && <p>Loading...</p>}
-
-      {/* Notes */}
-      {data?.notes && data.notes.length > 0 ? (
-        <NoteList
-          notes={data.notes}
-          deletingId={deletingId}
-          setDeletingId={setDeletingId}
-        />
-      ) : (
-        !isLoading && <p>No notes found</p>
-      )}
-
-      {/* Pagination */}
-      {data && data.totalPages && data.totalPages > 1 && (
-        <Pagination
-          totalPages={data.totalPages}
-          currentPage={page}
-          onPageChange={setPage}
-        />
-      )}
-
-      {/* ✅ Modal with Formik NoteForm */}
-      {isModalOpen && (
-        <Modal onClose={handleModalClose}>
-          <NoteForm onCancel={handleModalClose} onSuccess={handleModalSuccess} />
-        </Modal>
-      )}
-    </main>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotesByTagClient initialTag={tag} />
+    </HydrationBoundary>
   );
 }

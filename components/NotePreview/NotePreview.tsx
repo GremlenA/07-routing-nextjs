@@ -8,8 +8,6 @@ export default function NotePreview({ noteId }: { noteId: string }) {
   const { data: note, isLoading, error } = useQuery({
     queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
-    refetchOnMount: false,
-    staleTime: 1000 * 60,
   });
 
   if (isLoading) return <p>Loading...</p>;
