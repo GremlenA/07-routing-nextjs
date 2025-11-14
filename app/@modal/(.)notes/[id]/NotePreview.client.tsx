@@ -4,25 +4,16 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
-import css from "@/components/NotePreview/NotePreview.module.css";
 
-type Props = {
-  noteId: string;
-};
-
-export default function NotePreviewClient({ noteId }: Props) {
+export default function NotePreviewClient({ noteId }: { noteId: string }) {
   const router = useRouter();
 
-  const {
-    data: note,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: note, isLoading, error } = useQuery({
     queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
+    refetchOnMount: false, 
   });
 
-  
   if (isLoading) {
     return (
       <Modal onClose={() => router.back()}>
@@ -31,7 +22,6 @@ export default function NotePreviewClient({ noteId }: Props) {
     );
   }
 
-  // 💡 Error / not found state
   if (error || !note) {
     return (
       <Modal onClose={() => router.back()}>
@@ -40,14 +30,10 @@ export default function NotePreviewClient({ noteId }: Props) {
     );
   }
 
-
   return (
     <Modal onClose={() => router.back()}>
-      <div className={css.wrapper}>
-        <h2 className={css.title}>{note.title}</h2>
-        <span className={css.tag}>{note.tag}</span>
-        <p className={css.content}>{note.content}</p>
-      </div>
+      <h2>{note.title}</h2>
+      <p>{note.content}</p>
     </Modal>
   );
 }
