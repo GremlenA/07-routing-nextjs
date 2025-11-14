@@ -1,15 +1,16 @@
-import css from "./LayoutNotes.module.css";
+import type { ReactNode } from "react";
+import css from "./layout.module.css";
 
 type Props = {
-  children: React.ReactNode;
-  sidebar: React.ReactNode;
+  children: ReactNode;
+  sidebar: ReactNode;
 };
 
-export default function NotesLayout({ children, sidebar }: Props) {
+export default function NotesFilterLayout({ children, sidebar }: Props) {
   return (
-    <section className={css.container}>
-      <aside className={css.sidebar}>{sidebar}</aside>
-      <div className={css.notesWraper}>{children}</div>
+    <section className={css.notesWrapper}>
+      <aside>{sidebar}</aside>
+      <div>{children}</div>
     </section>
   );
 }

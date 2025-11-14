@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
+import dynamic from "next/dynamic";
+
 import NoteList from "../../../../components/NoteList/NoteList";
 import SearchBox from "../../../../components/SearchBox/SearchBox";
 import Modal from "../../../../components/Modal/Modal";
 import NoteForm from "../../../../components/NoteForm/NoteForm";
-import { useDebounce } from "use-debounce";
 import { fetchNotes } from "../../../../lib/api";
 import type { FetchNotesResponse } from "../../../../lib/api";
-import dynamic from "next/dynamic";
+
 import css from "./NotesPage.module.css";
 
 const Pagination = dynamic(
@@ -17,7 +19,11 @@ const Pagination = dynamic(
   { ssr: false }
 );
 
-export default function NotesClient() {
+type Props = {
+  tag: string; 
+};
+
+export default function NotesClient({ tag }: Props) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -29,16 +35,24 @@ export default function NotesClient() {
     setPage(1);
   };
 
-  const queryKey = ["notes", page, debouncedSearch] as const;
+  
+  const normalizedTag = tag === "all" ? undefined : tag;
+
+  const queryKey = ["notes", page, debouncedSearch, tag] as const;
 
   const { data, isLoading, isError, isFetching } = useQuery<
     FetchNotesResponse,
     Error,
     FetchNotesResponse,
-    readonly [string, number, string]
+    readonly [string, number, string, string]
   >({
     queryKey,
-    queryFn: () => fetchNotes({ page, search: debouncedSearch }),
+    queryFn: () =>
+      fetchNotes({
+        page,
+        search: debouncedSearch,
+        tag: normalizedTag, 
+      }),
     placeholderData: keepPreviousData,
     staleTime: 2000,
   });

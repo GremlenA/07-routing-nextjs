@@ -1,11 +1,8 @@
-
-const not_faund = () =>
-    {
-    return(
-        <>
-            <h1 >404 - Page not found</h1>
-            <p>Sorry, the page you are looking for does not exist.</p>
-        </>
-        )
+export default function NotFound() {
+  return (
+    <main>
+      <h1>404 – Сторінку не знайдено</h1>
+      <p>На жаль, такої сторінки не існує.</p>
+    </main>
+  );
 }
-export default not_faund;
