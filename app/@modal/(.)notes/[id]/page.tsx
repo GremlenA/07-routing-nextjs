@@ -1,4 +1,4 @@
-import ModalNoteClient from "./ModalNoteClient";
+import ModalNoteClient from "./NotePreview.client";
 
 export default async function ModalNotePage({
   params,
