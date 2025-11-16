@@ -1,36 +1,24 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { getQueryClient } from "../../../getQueryClient";
 import { fetchNoteById } from "@/lib/api";
-import Modal from "@/components/Modal/Modal";
+import NotePreviewClient from "../../@modal/(.)notes/[id]/NotePreview.client";
+export default async function NotePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-export default function NotePreviewClient({ noteId }: { noteId: string }) {
-  const router = useRouter();
+  const queryClient = getQueryClient();
 
-  const { data: note, isLoading, error } = useQuery({
-    queryKey: ["note", noteId],
-    queryFn: () => fetchNoteById(noteId),
+  await queryClient.prefetchQuery({
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
   });
 
-  if (isLoading)
-    return (
-      <Modal onClose={() => router.back()}>
-        <p>Loading...</p>
-      </Modal>
-    );
-
-  if (error || !note)
-    return (
-      <Modal onClose={() => router.back()}>
-        <p>Failed to load note</p>
-      </Modal>
-    );
-
   return (
-    <Modal onClose={() => router.back()}>
-      <h2>{note.title}</h2>
-      <p>{note.content}</p>
-    </Modal>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotePreviewClient noteId={id} />
+    </HydrationBoundary>
   );
 }

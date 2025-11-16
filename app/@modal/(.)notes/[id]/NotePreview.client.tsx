@@ -11,8 +11,8 @@ export default function NotePreviewClient({ noteId }: { noteId: string }) {
   const { data: note, isLoading, error } = useQuery({
     queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
-    enabled: !!noteId,              // <-- ГОЛОВНЕ ВИПРАВЛЕННЯ
-    refetchOnMount: true,           // <-- так теж можна для безпеки
+    enabled: !!noteId,              
+    refetchOnMount: true,           
   });
 
   if (isLoading) {
