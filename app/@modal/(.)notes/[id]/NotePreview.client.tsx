@@ -12,7 +12,7 @@ export default function NotePreviewClient({ noteId }: { noteId: string }) {
     queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
     enabled: !!noteId,              
-    refetchOnMount: true,           
+    refetchOnMount: false,           
   });
 
   if (isLoading) {
